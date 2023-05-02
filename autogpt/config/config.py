@@ -2,13 +2,19 @@
 import os
 
 import openai
+from gpt4free import forefront
 import yaml
-from colorama import Fore
 from dotenv import load_dotenv
 
 from autogpt.config.singleton import Singleton
 
 load_dotenv(verbose=True)
+
+
+def create_account():
+    token = forefront.Account.create(logging=False)
+    print(token)
+    return token
 
 
 class Config(metaclass=Singleton):
@@ -36,7 +42,9 @@ class Config(metaclass=Singleton):
             "BROWSE_SPACY_LANGUAGE_MODEL", "en_core_web_sm"
         )
 
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        # self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        self.openai_api_key = 'NOT_IN_USE'
+        self.forefront_api_key = create_account()
         self.temperature = float(os.getenv("TEMPERATURE", "0"))
         self.use_azure = os.getenv("USE_AZURE") == "True"
         self.execute_local_commands = (
@@ -245,10 +253,10 @@ class Config(metaclass=Singleton):
 def check_openai_api_key() -> None:
     """Check if the OpenAI API key is set in config.py or as an environment variable."""
     cfg = Config()
-    if not cfg.openai_api_key:
-        print(
-            Fore.RED
-            + "Please set your OpenAI API key in .env or as an environment variable."
-        )
-        print("You can get your key from https://platform.openai.com/account/api-keys")
-        exit(1)
+    # if not cfg.openai_api_key:
+    #     print(
+    #         Fore.RED
+    #         + "Please set your OpenAI API key in .env or as an environment variable."
+    #     )
+    #     print("You can get your key from https://platform.openai.com/account/api-keys")
+    #     exit(1)

@@ -73,17 +73,17 @@ class LocalCache(MemoryProviderSingleton):
             return ""
         self.data.texts.append(text)
 
-        embedding = create_embedding_with_ada(text)
-
-        vector = np.array(embedding).astype(np.float32)
-        vector = vector[np.newaxis, :]
-        self.data.embeddings = np.concatenate(
-            [
-                self.data.embeddings,
-                vector,
-            ],
-            axis=0,
-        )
+        # embedding = create_embedding_with_ada(text)
+        #
+        # vector = np.array(embedding).astype(np.float32)
+        # vector = vector[np.newaxis, :]
+        # self.data.embeddings = np.concatenate(
+        #     [
+        #         self.data.embeddings,
+        #         vector,
+        #     ],
+        #     axis=0,
+        # )
 
         with open(self.filename, "wb") as f:
             out = orjson.dumps(self.data, option=SAVE_OPTIONS)
@@ -111,7 +111,7 @@ class LocalCache(MemoryProviderSingleton):
         return self.get_relevant(data, 1)
 
     def get_relevant(self, text: str, k: int) -> list[Any]:
-        """ "
+        """
         matrix-vector mult to find score-for-each-row-of-matrix
          get indices for top-k winning scores
          return texts for those indices
@@ -121,13 +121,14 @@ class LocalCache(MemoryProviderSingleton):
 
         Returns: List[str]
         """
-        embedding = create_embedding_with_ada(text)
+        # embedding = create_embedding_with_ada(text)
+        #
+        # scores = np.dot(self.data.embeddings, embedding)
+        #
+        # top_k_indices = np.argsort(scores)[-k:][::-1]
 
-        scores = np.dot(self.data.embeddings, embedding)
-
-        top_k_indices = np.argsort(scores)[-k:][::-1]
-
-        return [self.data.texts[i] for i in top_k_indices]
+        return self.data.texts
+        # return [self.data.texts[i] for i in top_k_indices]
 
     def get_stats(self) -> tuple[int, tuple[int, ...]]:
         """

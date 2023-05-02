@@ -4,7 +4,7 @@ import os.path
 import uuid
 from base64 import b64decode
 
-import openai
+from gpt4free import forefront
 import requests
 from PIL import Image
 
@@ -86,7 +86,6 @@ def generate_image_with_dalle(prompt: str, filename: str) -> str:
     Returns:
         str: The filename of the image
     """
-    openai.api_key = CFG.openai_api_key
 
     # Check for supported image sizes
     if size not in [256, 512, 1024]:
@@ -96,7 +95,7 @@ def generate_image_with_dalle(prompt: str, filename: str) -> str:
         )
         size = closest
 
-    response = openai.Image.create(
+    response = forefront.Image.create(
         prompt=prompt,
         n=1,
         size=f"{size}x{size}",

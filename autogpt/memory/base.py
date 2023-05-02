@@ -1,7 +1,7 @@
 """Base class for memory providers."""
 import abc
 
-import openai
+from gpt4free import forefront
 
 from autogpt.config import AbstractSingleton, Config
 
@@ -10,15 +10,9 @@ cfg = Config()
 
 def get_ada_embedding(text):
     text = text.replace("\n", " ")
-    if cfg.use_azure:
-        return openai.Embedding.create(
-            input=[text],
-            engine=cfg.get_azure_deployment_id_for_model("text-embedding-ada-002"),
-        )["data"][0]["embedding"]
-    else:
-        return openai.Embedding.create(input=[text], model="text-embedding-ada-002")[
-            "data"
-        ][0]["embedding"]
+    return forefront.Embedding.create(prompt=[text], model="text-embedding-ada-002", token=cfg.forefront_api_key)[
+        "data"
+    ][0]["embedding"]
 
 
 class MemoryProviderSingleton(AbstractSingleton):
