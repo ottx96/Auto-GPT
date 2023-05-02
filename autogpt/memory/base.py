@@ -3,6 +3,7 @@ import abc
 
 from gpt4free import forefront
 
+from sentence_transformers import SentenceTransformer
 from autogpt.config import AbstractSingleton, Config
 
 cfg = Config()
@@ -10,9 +11,10 @@ cfg = Config()
 
 def get_ada_embedding(text):
     text = text.replace("\n", " ")
-    return forefront.Embedding.create(prompt=[text], model="text-embedding-ada-002", token=cfg.forefront_api_key)[
-        "data"
-    ][0]["embedding"]
+    return SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2').encode(text)[0]
+    # return forefront.Embedding.create(prompt=[text], model="text-embedding-ada-002", token=cfg.forefront_api_key)[
+    #     "data"
+    # ][0]["embedding"]
 
 
 class MemoryProviderSingleton(AbstractSingleton):

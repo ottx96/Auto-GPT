@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from sentence_transformers import SentenceTransformer
 import time
 
 from colorama import Fore
@@ -79,7 +80,7 @@ def create_chat_completion(
     prompt = ''
 
     for map in messages:
-        prompt += map['role'] + ': ' + map['content'] + '\n'
+        prompt += map['content'] + '\n'
 
     print('== PROMPT START ==')
     print(prompt)
@@ -109,9 +110,14 @@ def create_embedding_with_ada(text) -> list:
     for attempt in range(num_retries):
         backoff = 2 ** (attempt + 2)
         try:
-            return forefront.Embedding.create(
-                prompt=[text], model="text-embedding-ada-002", token=cfg.forefront_api_key
-            )["data"][0]["embedding"]
+
+
+            model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+            embeddings = model.encode(text)
+            return embeddings[0]
+            # return forefront.Embedding.create(
+            #     prompt=[text], model="text-embedding-ada-002", token=cfg.forefront_api_key
+            # )["data"][0]["embedding"]
         except RateLimitError:
             pass
         except APIError as e:
